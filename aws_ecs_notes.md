@@ -1,4 +1,4 @@
-## AWS ECS
+# AWS ECS
 AWS ECS is a highly scalable, fast, container management service that makes it easy to run, stop, and manage Docker containers on a cluster. You can host your cluster on a serverless infrastructure that is managed by ECS by launching your services or tasks using the Fargate launch type. For more control you can host your tasks on a cluster of EC2 instances that you manage by using the EC2 launch type. Elastic Beanstalk can also be used to rapidly develop, test, and deploy Docker containers in conjunction with other components of your application infrastructure; however, using ECS directly provides more fine-grained control and access to a wider set of use cases.
 
 Features of ECS
@@ -30,7 +30,13 @@ AWS infrastructure.
   * AWS Identity and Access Management - IAM is a web service that helps you securely control access to AWS resources for your users. Use IAM to control who
   can use your AWS resources (authentication) and what resources they can use in which ways (authorization). In Amazon ECS, IAM can be used to control access
   at the container instance level using IAM roles, and at the task level using IAM task roles. 
-  * AWS EC2 Auto Scaling -
+  * AWS EC2 Auto Scaling - is a web service that enables you to automatically scale out or in your tasks based on user-defined policies, health status checks,
+    and schedules. You can use Auto Scaling with a Fargate task within a service to scale the container instances within your cluster. 
+  * Elastic Load Balancing - automatically distributes incoming application traffic across the tasks in your Amazon ECS service. It enables you to achieve
+    greater levels of fault tolerance in your applications, seamlessly providing the required amount of load balancing capacity needed to distribute application
+    traffic. You can use ELB to create an endpoint that balances traffic across services in a cluster.
+  * Amazon Elastic Container Registry
+  * AWS CloudFormation
 
 ## AWS Fargate on Amazon ECS
 
@@ -46,15 +52,15 @@ When you run your tasks and services with the Fargate launch type, you package y
 network interface. A network configuration is also required when creating a service or manually running tasks.
 
 * Task CPU and Memory - Fargate task definitions require that you specify CPU and memory at the task level. Although, you can also specify CPU and memory at the
-container level for Fargate tasks, this is optional. The table below shows the valid combinations of task-level CPU and memory.
+  container level for Fargate tasks, this is optional. The table below shows the valid combinations of task-level CPU and memory.
 
-| CPU value | Memory value |
-| ---      | ---          |
-| 256 (.25 vCPU) | 0.5 GB, 1 GB, 2 GB |
-| 512 (.5 vCPU)  | 1 GB, 2 GB, 3 GB, 4 GB |
-| 1024 (1 vCPU)  | 2 GB, 3 GB, 4 GB, 5 GB, 6 GB, 7 GB, 8 GB |
-| 2048 (2 vCPU)  | Between 4 GB and 16 GB in 1-GB increments |
-| 4096 (4 vCPU)  | Between 8 GB and 30 GB in 1-GB increments |
+  | CPU value | Memory value |
+  | ---      | ---          |
+  | 256 (.25 vCPU) | 0.5 GB, 1 GB, 2 GB |
+  | 512 (.5 vCPU)  | 1 GB, 2 GB, 3 GB, 4 GB |
+  | 1024 (1 vCPU)  | 2 GB, 3 GB, 4 GB, 5 GB, 6 GB, 7 GB, 8 GB |
+  | 2048 (2 vCPU)  | Between 4 GB and 16 GB in 1-GB increments |
+  | 4096 (4 vCPU)  | Between 8 GB and 30 GB in 1-GB increments |
 
 * Logging - Fargate task definitions only support the `awslogs` and `splunk` log drivers for the log configuration. The `awslogs` log driver configures your
   Fargate tasks to send log information to Amazon CloudWatch Logs. The following shows a snippet of a task definition where the awslogs log driver is
@@ -238,4 +244,3 @@ that your Fargate tasks have been scheduled for retirement.
     * If your service is scaled up without updating the platform version, those tasks receive the platform version that
       was specified on the service's current deployment.
 
-## Security in Amazon Elastic Container Service
