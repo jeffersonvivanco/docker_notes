@@ -6,6 +6,9 @@ Features of ECS
 ECS is a regional service that simplifies running application containers in a highly available manner across multiple Availability Zones within a Region. You can create ECS clusters within a new or existing VPC. After a cluster is up and running, you can define task definitions and services that specify which Docker container images to run across your clusters. Container images are stored in and pulled from container registries, which may exist within or outside of your
 AWS infrastructure.
 
+## Notes to keep in mind, need to research this
+* when using Route53 directly with a container instance, there is not DoS or any other kind of fraud protection
+
 ## AWS ECS Architecture
 * Container and Images
 * Task Definitions

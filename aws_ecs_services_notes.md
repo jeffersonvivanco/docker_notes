@@ -7,10 +7,22 @@ Service discovery uses AWS Cloud Map API actions to manage HTTP and DNS namespac
 Amazon ECS services.
 
 ### Service Discovery Concepts
+
+Amazon ECS Service Discovery works by communicating with the Amazon Route 53 Service Registry
+and Auto Naming APIs.
+* Namespaces: A namespace specifies a domain name you want to route traffic to (e.g. internal,
+  local, corp). You can think of it as a logical boundary between which services should be
+  able to discover each other. Namespaces are roughly equivalent to hosted zones in Route 53.
+  A namespace contains services.
+* Service: A service is a specific application or set of applications in your namespace like
+  "auth", "timeline", or "worker". A service contains service instances.
+* Service Instance: A service instance contains information about how Route 53 should respond
+  to DNS queries for a resource.
+
 Service Discovery consists of the following components:
 
 * Service discovery namespace: A logical group of service discovery services that share the same
-  domain name, such as `example.com`
+  domain name, such as `example.com`. 
 
 * Service discovery service: Exists within the service discovery namespace and consists of the
   service name and DNS configuration for the namespace. It provides the following core component:
@@ -41,4 +53,4 @@ Service Discovery consists of the following components:
 
 * Amazon ECS Health Checks: Amazon ECS performs periodic container-level health checks. If an
   endpoint does not pass the health check, it is removed from DNS routing and marked as
-  unhealthy.  
+  unhealthy.
