@@ -32,6 +32,9 @@ a hypervisor, but run directly within the host machine's kernel. You can even ru
   * A command line interface client (the `docker` command)
 The daemon creates and manages Docker objects, such as images, containers, networks and volumes.
 
+![docker engine](./assets/dockerEngine.png "docker enginer")
+
+
 ## What can I use Docker for?
 
 ### Fast, consistent delivery of your applications
@@ -59,6 +62,8 @@ where you need to do more with fewer resources.
 Docker uses a client-server architecture. The docker *client* talks to the docker *daemon*, which does the heavy lifting of buidling, running, and
 distributing your docker containers. The docker client and daemon can run on the same system, or you can connect a docker client to a remote
 docker daemon. The docker client and daemon communicate over a REST API, oer UNIX sockets or a network interface.
+
+![docker architecture](./assets/dockerArchitecture.png "docker architecture")
 
 * The Docker daemon
   * The Docker daemon (`dockerd`) listens for Docker API requests and manages Docker objects such as images,
