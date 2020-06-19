@@ -4,10 +4,34 @@
 * `docker ps` - list of running containers
 * `docker info`
 * `docker run` - to run an image
-  * `IMAGE_NAME` - to run image called IMAGE_NAME
   * `-p 4000:80` - mapping port 4000 to 80
   * `-d` - in detached mode. Your container runs in the background.
+  * `-i` - interactive, keep STDIN open even if not attached
+  * `-t` - allocate a pseudo-TTY 
   * `username/repository:tag` - run image from a registry
+  * `IMAGE_NAME` - to run image called IMAGE_NAME
+  * `--sysctl` - sysctl options.
+    * **Configure namespaced kernel parameters [sysctls] at runtime**
+
+      The `--sysctl` sets namespaced kernel parameters (sysctls) in the container. For example,
+      to turn on ip forwarding in the containers network namespace, run this command.
+      `docker run --sysctl net.ipv4.ip_forwarding=1 someimage` 
+
+      Note: Not all sysctls are namespaced. Docker does not support changing sysctls inside of
+      a container that also modify the host system. As the kernel evolves we expect to see more
+      sysctls become namespaced.
+
+      Currently supported sysctls
+
+      IPC Namespace:
+      * `kernel.msgmax`, `kernel.msgmnb`, `kernel.msgmni`, `kernel.sem`, `kernel.shmall`, `kernel.shmmax`, `kernel.shmmni`, 
+        `kernel.shm_rmid_forced`.
+      * Sysctls beginning with `fs.mqueue.*`
+      * If you use the `--ipc=host` option these sysctls are not allowed
+
+      Network Namespace:
+      * Sysctls beginning with `net.*`
+      * If you use the `--network=host` option using these sysctls are not allowed. 
 * `docker image`
   * `ls` - list images
     * `-a` - list all images
@@ -17,6 +41,7 @@
   * `--tag=TAG` - add a tag to the image, like `latest`
   * `-t` - name and optionally a tag in the 'name:tag' format. 
   * `.` - create image using this directory's Dockerfile
+  * `-f` - name of the Dockerfile
 * `docker-machine`
   * `ip` - to find the ip address
   * `create --driver virtualbox VM_NAME` - creates a VM with name VM_NAME
@@ -59,6 +84,8 @@
 * `docker login`
 * `docker tag IMAGE_NAME username/repository:tag`
 * `docker push username/repository:tag`
+* `docker pull [options] NAME:[:TAG|@DIGEST]` - pull an image or a repo from a registry
+  * `-a` - download all tagged images in the repository
 * `docker inspect TASK_OR_CONTAINER` - inspect task or container
 * `docker node`
   * `ls` - run this on the manager to view the nodes in this swarm
