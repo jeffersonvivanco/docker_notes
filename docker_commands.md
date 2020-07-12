@@ -3,45 +3,84 @@
 * `--help`
 * `docker ps` - list of running containers
 * `docker info`
-* `docker run` - to run an image
-  * `-p 4000:80` - mapping port 4000 to 80
-  * `-d` - in detached mode. Your container runs in the background.
-  * `-i` - interactive, keep STDIN open even if not attached
-  * `-t` - allocate a pseudo-TTY 
-  * `username/repository:tag` - run image from a registry
-  * `IMAGE_NAME` - to run image called IMAGE_NAME
-  * `--sysctl` - sysctl options.
-    * **Configure namespaced kernel parameters [sysctls] at runtime**
 
-      The `--sysctl` sets namespaced kernel parameters (sysctls) in the container. For example,
-      to turn on ip forwarding in the containers network namespace, run this command.
-      `docker run --sysctl net.ipv4.ip_forwarding=1 someimage` 
+## `docker run` - run a command in a new container
+`docker run [OPTIONS] IMAGE [COMMAND] [ARG...]`
 
-      Note: Not all sysctls are namespaced. Docker does not support changing sysctls inside of
-      a container that also modify the host system. As the kernel evolves we expect to see more
-      sysctls become namespaced.
+The `docker run` command first creates a writeable container layer over the specified image, and then
+starts it using the specified command. A stopped container can be restarted with all its previous
+changes intact using `docker start`. Ex running an image from a registry: `docker run username/repository:tag`
 
-      Currently supported sysctls
+* `-a` - attach to STDIN, STDOUT, or STDERR
+* `--cidfile` - write the container id to the file
+* `-d` - in detached mode. Your container runs in the background.
+* `--entrypoint` - overwrite the default ENTRYPOINT of the image.
+* `-e` - set environment variables ex: `-e PROFILE`, or `-e PROFILE=DEV`
+* `--env-file` - load variables from a file env.list
+* `-expose` - expose a port or a range of ports
+* `--help` - print usage
+* `-i` - interactive, keep STDIN open even if not attached
+* `-m` - memory limit
+* `--mount` - attach a filesystem mount to the container
+  * ex: `docker run --read-only --mount type=volume,target=/icanwrite busybox touch /icanwrite/here`
+  * ex: `docker run -t -i --mount type=bind,src=/data,dst=/data busybox sh`
+* `--name` - assign a name to the container
+* `-l` - set meta data on a container, similar to environment variables
+* `--label-file` - read in a line delimited file of labels ex: `docker run --label-file ./labels ubuntu bash`
+* `-p 4000:80` - mapping port 4000 to 80, publish a container's port(s) to the host
+* `--read-only` - mount the container's root filesystem as read only
+* `--rm` - automatically remove the container when it exits
+* `--sysctl` - sysctl options.
+  * **Configure namespaced kernel parameters [sysctls] at runtime**
 
-      IPC Namespace:
-      * `kernel.msgmax`, `kernel.msgmnb`, `kernel.msgmni`, `kernel.sem`, `kernel.shmall`, `kernel.shmmax`, `kernel.shmmni`, 
-        `kernel.shm_rmid_forced`.
-      * Sysctls beginning with `fs.mqueue.*`
-      * If you use the `--ipc=host` option these sysctls are not allowed
+    The `--sysctl` sets namespaced kernel parameters (sysctls) in the container. For example,
+    to turn on ip forwarding in the containers network namespace, run this command.
+    `docker run --sysctl net.ipv4.ip_forwarding=1 someimage` 
 
-      Network Namespace:
-      * Sysctls beginning with `net.*`
-      * If you use the `--network=host` option using these sysctls are not allowed. 
-* `docker image`
-  * `ls` - list images
-    * `-a` - list all images
-  * `rm IMAGE_ID`
-  * `rm $(docker image ls -a -q)` - remove all images from this machine
-* `docker build` - create image
-  * `--tag=TAG` - add a tag to the image, like `latest`
-  * `-t` - name and optionally a tag in the 'name:tag' format. 
-  * `.` - create image using this directory's Dockerfile
-  * `-f` - name of the Dockerfile
+    Note: Not all sysctls are namespaced. Docker does not support changing sysctls inside of
+    a container that also modify the host system. As the kernel evolves we expect to see more
+    sysctls become namespaced.
+
+    Currently supported sysctls
+
+    IPC Namespace:
+    * `kernel.msgmax`, `kernel.msgmnb`, `kernel.msgmni`, `kernel.sem`, `kernel.shmall`, `kernel.shmmax`, `kernel.shmmni`, 
+      `kernel.shm_rmid_forced`.
+    * Sysctls beginning with `fs.mqueue.*`
+    * If you use the `--ipc=host` option these sysctls are not allowed
+
+    Network Namespace:
+    * Sysctls beginning with `net.*`
+    * If you use the `--network=host` option using these sysctls are not allowed. 
+* `-t` - allocate a pseudo-TTY
+* `-v` - bind mount a volume ex: ``docker run -v `pwd`:`pwd` ...``
+  * When the host directory of a bind-mounted volume doesn't exist, Docker will automatically create this directory on the host for you.
+  * mounted directory must be in the home directory not in the root directory in linux
+* `-w` - working directory inside the container
+
+## `docker image` - manage images
+* `ls` - list images
+  * `-a` - list all images
+  * `-q` - only show numeric ids
+* `rm IMAGE_ID`
+* `rm $(docker image ls -a -q)` - remove all images from this machine
+
+## `docker build` - build an image from a Dockerfile
+`docker build [OPTIONS] PATH | URL | -`
+
+The `docker build` command builds Docker images from a Dockerfile and a "context". A build's context is the set of
+files located in the specified `PATH` or `URL`. The build process can refer to any of the files in the context.
+For example, your build can use a *COPY* instruction to reference a file in the context. The `URL` parameter can
+refer to 3 kinds of resources: GIT repos, pre-packaged tarball contexts and plain text files.
+
+Ex: To build with PATH - `docker build .`
+
+* `--tag=TAG` - add a tag to the image, like `latest`
+* `-t` - name and optionally a tag in the 'name:tag' format. 
+* `-f` - name of the Dockerfile
+* `--force-rm` - always remove intermediate containers
+* `--pull` - always attempt to pull a newer version of the image.
+
 * `docker-machine`
   * `ip` - to find the ip address
   * `create --driver virtualbox VM_NAME` - creates a VM with name VM_NAME
@@ -61,6 +100,9 @@
     * `-aq` - all in quiet mode
     * `-a` - even those not running 
   * `stop CONTAINER_ID`
+  * `start CONTAINER_ID`
+    * `-a` - attach STDOUT/STDERR and forward signals
+    * `-i` - attach container's STDIN
   * `kill CONTAINER_ID` - force shutdown of the specified container
   * `rm CONTAINER_ID` - remove specified container from this machine
     * `$(docker container ls -a -q)` - remove all containers
